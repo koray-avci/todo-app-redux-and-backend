@@ -1,18 +1,24 @@
-import {useEffect} from "react";
-
+import { useEffect } from "react";
+import ClearButton from "./ClearButton";
 import { useSelector, useDispatch } from "react-redux";
 import {
   changeActiveFilter,
-  clearTodoAsync,
+  clearCompletedAsync,
   selectTodos,
+  selectItemsCompleted
 } from "../Redux/todos/todosSlice";
 
 function ContentFooter() {
+  const itemsCompleted = useSelector(selectItemsCompleted)
   const dispatch = useDispatch();
   const items = useSelector(selectTodos);
   const itemsLeft = items.filter((item) => !item.completed).length;
 
   const activeFilter = useSelector((state) => state.todos.activeFilter);
+
+  const handleClear = () => {
+    dispatch(clearCompletedAsync())
+  }
 
   useEffect(() => {
     localStorage.setItem('activeFilter', activeFilter)
@@ -55,12 +61,7 @@ function ContentFooter() {
         </li>
       </ul>
 
-      <button
-        className="clear-completed"
-        onClick={() => dispatch(clearTodoAsync(items))}
-      >
-        Clear completed
-      </button>
+      <ClearButton />
     </footer>
   );
 }

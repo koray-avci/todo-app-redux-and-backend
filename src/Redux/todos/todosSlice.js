@@ -21,9 +21,8 @@ export const removeTodoAsync = createAsyncThunk('todos/removeTodoAsync', async (
   return id;
 })
 
-export const clearTodoAsync = createAsyncThunk('todos/clearTodoAsync', async (id, data) => {
-  const res = await axios.delete(`${process.env.REACT_APP_API_BASE_ENDPOINT}/todos/${id}`, data);
-  return res.data;
+export const clearCompletedAsync = createAsyncThunk('todos/clearCompletedAsync', async () => {
+  await axios.get(`${process.env.REACT_APP_API_BASE_ENDPOINT}/todos`);
 })
 
 export const todosSlice = createSlice({
@@ -85,13 +84,16 @@ export const todosSlice = createSlice({
       state.items.splice(index, 1)
     },
     // clear completed todo
-    [clearTodoAsync.fulfilled]: (state, action) => {
-      const filtered = state.items.filter((item) => item.completed === false);
-      state.items = filtered;
+    [clearCompletedAsync.fulfilled]: (state) => {
+      state.items = state.items.filter(item => item.completed === false)
     }
   },
 
 });
+
+export const selectItemsCompleted = state => {
+  return state.todos.items.filter(item => item.completed === true).length;
+}
 
 export const selectTodos = (state) => state.todos.items;
 export const selectFilteredTodos = (state) => {
